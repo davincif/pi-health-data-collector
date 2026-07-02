@@ -1,7 +1,7 @@
 from typing import TypedDict, Required
 
 
-class TemperatureInfo(TypedDict, total=False):
+class TemperatureInfo(TypedDict):
 
     label: Required[str]
     current: Required[int]
