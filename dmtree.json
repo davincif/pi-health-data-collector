@@ -1,0 +1,27 @@
+{
+	"development": [
+		"dependencymanager"
+	],
+	"production": [
+		"psutil"
+	],
+	"packs": {
+		"dependencymanager": {
+			"head": true,
+			"version": "1.0.0",
+			"requires": [],
+			"required-by": [],
+			"dev": true
+		},
+		"psutil": {
+			"head": true,
+			"version": "7.2.2",
+			"requires": [],
+			"required-by": [],
+			"dev": false
+		}
+	},
+	"pipdeps": [
+		"pip"
+	]
+}
