@@ -7,6 +7,7 @@ update_rate = 0.9
 version = "0.0.1"
 verbose = False
 server_now = {"now": 0, "counter": 0}
+timeout_retries_attempt = 3
 
 AUTO_CONNECT_PORT = 6271
 

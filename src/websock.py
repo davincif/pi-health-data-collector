@@ -1,6 +1,7 @@
 import threading
 from time import sleep
 
+from websockets import ConnectionClosedOK
 from websockets.sync.client import connect
 
 import globalvars
@@ -14,17 +15,42 @@ class Websock:
 
     def __init__(self, server_info: tuple[str, int]):
         self.uri = f"ws://{server_info[0]}:{server_info[1]}"
-        # self.thread = threading.Thread(target=self.stream_info_sending)
-        # self.thread.start()
+        print("connecting to", self.uri)
+
+        self.thread = threading.Thread(target=self.stream_info_sending)
+        self.thread.start()
 
     def send(self, info: bytes):
         with self.queue_lock:
             self.queue.append(info)
 
     def stream_info_sending(self):
+        retries = 0
+        while not globalvars.kill_now and retries < globalvars.timeout_retries_attempt:
+            try:
+                self.__consume_queue()
+                print("health streaming to server stoped.")
+                retries = globalvars.timeout_retries_attempt
+            except TimeoutError as error:
+                retries += 1
+                print("server not responding: timeout", error)
+                print("trying again...")
+
+                if retries == globalvars.timeout_retries_attempt:
+                    print("maximum retries reached, giving up connection.")
+                    globalvars.kill_now = True
+
+    def close(self):
+        self.queue = []
+        try:
+            self.queue_lock.release()
+        except Exception:
+            pass
+
+    def __consume_queue(self):
         with connect(self.uri) as websocket:
             while not globalvars.kill_now:
-                if self.queue_lock.locked or len(self.queue) == 0:
+                if self.queue_lock.locked() or len(self.queue) == 0:
                     sleep(globalvars.update_rate)
                     continue
 
@@ -32,9 +58,9 @@ class Websock:
                     if len(self.queue) == 0:
                         continue
                     data = self.queue.pop(0)
-                websocket.send(data)
-        print("streaming health to server stoped.")
 
-    def close(self):
-        self.queue = []
-        self.queue_lock.release()
+                try:
+                    websocket.send(data)
+                except ConnectionClosedOK as error:
+                    print("connection has been closed:", error)
+                    break

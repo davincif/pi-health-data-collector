@@ -11,7 +11,6 @@ from time import perf_counter, sleep, time
 from types import FrameType
 
 import psutil
-import asyncio
 
 from connection import find_data_orchestrator_server
 import globalvars
@@ -35,7 +34,7 @@ websock: Websock
 isInited = False
 
 
-async def main():
+def main():
     signal.signal(signal.SIGTERM, exit_gracefully)
     signal.signal(signal.SIGINT, exit_gracefully)
 
@@ -66,7 +65,7 @@ def watch(server: tuple[str, int]):
     initial_time = time()
     init(server)
     initial_data_to_transfer = serialize_unmutables()
-    # websock.send(initial_data_to_transfer.encode())
+    websock.send(initial_data_to_transfer.encode())
 
     if globalvars.verbose:
         print("started at", initial_time)
@@ -76,7 +75,7 @@ def watch(server: tuple[str, int]):
 
         update()
         data_to_transfer = serialize_update()
-        # websock.send(data_to_transfer.encode())
+        websock.send(data_to_transfer.encode())
 
         cost = perf_counter() - start
         ramining = globalvars.update_rate - cost
@@ -166,4 +165,4 @@ def exit_gracefully(signum: int, frame: FrameType | None):
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
