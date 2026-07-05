@@ -4,7 +4,7 @@ from models.vendor import Vendor
 kill_now = False
 vendor = Vendor.UNKNOWN
 update_rate = 0.9
-version = "0.0.1"
+version = "0.0.2"
 verbose = False
 server_now = {"now": 0, "counter": 0}
 timeout_retries_attempt = 3

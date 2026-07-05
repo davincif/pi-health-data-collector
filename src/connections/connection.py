@@ -2,6 +2,7 @@ import json
 import socket
 from time import perf_counter, sleep
 
+from api_models.client_registry import ClientRegistry
 import globalvars
 
 
@@ -51,6 +52,6 @@ def __handle_server_resp(msg: bytes, addr: str):
 
 
 def __make_discovery_msg() -> bytes:
-    data = {"requester": socket.gethostname(), "request": "data-sender"}
+    data = ClientRegistry({"requester": socket.gethostname(), "request": "data-sender"})
 
     return json.dumps(data).encode()

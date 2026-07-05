@@ -57,8 +57,18 @@ class Temperature:
 
     def marshal_update(self):
         return {
-            "cpu": self.cpu,
-            "gpu": self.gpu,
+            "cpu": {
+                "lb": self.cpu["label"],
+                "curr": self.cpu["current"],
+                "high": self.cpu["high"],
+                "crit": self.cpu["critical"],
+            },
+            "gpu": {
+                "lb": self.gpu["label"],
+                "curr": self.gpu["current"],
+                "high": self.gpu["high"],
+                "crit": self.gpu["critical"],
+            },
         }
 
     def __str__(self) -> str:

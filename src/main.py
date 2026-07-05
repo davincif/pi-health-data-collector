@@ -12,7 +12,7 @@ from types import FrameType
 
 import psutil
 
-from connection import find_data_orchestrator_server
+from connections.connection import find_data_orchestrator_server
 import globalvars
 from watchers.cpu import CPU
 from watchers.disks import Disks
@@ -20,7 +20,7 @@ from watchers.memory import Memory
 from watchers.net import Net
 from watchers.temperature import Temperature
 from watchers.up_time import UpTime
-from websock import Websock
+from connections.websock import Websock
 
 cost = 0
 
@@ -46,6 +46,10 @@ def main():
     globalvars.set_globals()
 
     server = find_data_orchestrator_server()
+
+    if globalvars.kill_now:
+        return
+
     if server is None:
         raise Exception("health orchestrator server not found")
 
@@ -70,11 +74,12 @@ def watch(server: tuple[str, int]):
     if globalvars.verbose:
         print("started at", initial_time)
 
+    cost = -1
     while not globalvars.kill_now:
         start = perf_counter()
 
         update()
-        data_to_transfer = serialize_update()
+        data_to_transfer = serialize_update(cost)
         websock.send(data_to_transfer.encode())
 
         cost = perf_counter() - start
@@ -125,12 +130,10 @@ def serialize_unmutables():
     global temp_sensor, up_time, cpu, memory, disk, net
 
     data = {
-        "temp": temp_sensor.marshal_unmutables(),
         "uptime": up_time.marshal_unmutables(),
         "process": cpu.marshal_unmutables(),
         "memory": memory.marshal_unmutables(),
         "disk": disk.marshal_unmutables(),
-        "net": net.marshal_unmutables(),
         "now": (perf_counter() - globalvars.server_now["counter"])
         + globalvars.server_now["now"],
     }
@@ -138,7 +141,7 @@ def serialize_unmutables():
     return json.dumps(data)
 
 
-def serialize_update():
+def serialize_update(cost: float):
     global temp_sensor, up_time, cpu, memory, disk, net
 
     data = {
@@ -150,6 +153,7 @@ def serialize_update():
         "net": net.marshal_update(),
         "now": (perf_counter() - globalvars.server_now["counter"])
         + globalvars.server_now["now"],
+        "lct": cost,
     }
 
     return json.dumps(data)

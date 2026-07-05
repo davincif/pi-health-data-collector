@@ -39,13 +39,13 @@ class VirtualMemory:
 
     def marshal_update(self):
         return {
-            "a": self.available,
+            "avlb": self.available,
             "p": self.percent,
             "u": self.used,
             "f": self.free,
             "ac": self.active,
             "in": self.inactive,
-            "b": self.buffers,
+            "bff": self.buffers,
             "ca": self.cached,
             "sh": self.shared,
             "sl": self.slab,
