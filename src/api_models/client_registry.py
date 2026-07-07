@@ -3,4 +3,6 @@ from typing import Literal, TypedDict, Required
 
 class ClientRegistry(TypedDict):
     requester: Required[str]
-    request: Required[Literal["data-sender", ""]]
+    command: Required[
+        Literal["connect", "disconnect", "update-unmutable", "helth-check-info"]
+    ]

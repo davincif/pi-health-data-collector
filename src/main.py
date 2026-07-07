@@ -130,6 +130,8 @@ def serialize_unmutables():
     global temp_sensor, up_time, cpu, memory, disk, net
 
     data = {
+        "requester": globalvars.hostname,
+        "command": "update-unmutable",
         "uptime": up_time.marshal_unmutables(),
         "process": cpu.marshal_unmutables(),
         "memory": memory.marshal_unmutables(),
@@ -145,6 +147,8 @@ def serialize_update(cost: float):
     global temp_sensor, up_time, cpu, memory, disk, net
 
     data = {
+        "requester": globalvars.hostname,
+        "command": "helth-check-info",
         "temp": temp_sensor.marshal_update(),
         # "uptime": up_time.marshal_update(),
         "process": cpu.marshal_update(),

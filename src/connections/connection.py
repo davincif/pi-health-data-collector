@@ -52,6 +52,6 @@ def __handle_server_resp(msg: bytes, addr: str):
 
 
 def __make_discovery_msg() -> bytes:
-    data = ClientRegistry({"requester": socket.gethostname(), "request": "data-sender"})
+    data = ClientRegistry({"requester": globalvars.hostname, "command": "connect"})
 
     return json.dumps(data).encode()
