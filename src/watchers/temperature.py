@@ -24,7 +24,6 @@ class Temperature:
         tempData = psutil.sensors_temperatures()
 
         cpu_thermal = tempData["cpu_thermal"][0]
-        print("cpu_thermal", cpu_thermal)
         self.__set_info(self.cpu, cpu_thermal)
 
     def update_thinkpad(self):

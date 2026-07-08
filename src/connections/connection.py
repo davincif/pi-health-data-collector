@@ -20,10 +20,11 @@ def find_data_orchestrator_server() -> tuple[str, int] | None:
     while not globalvars.kill_now and not server_found:
         try:
             print(
-                f"broadcasting @ {("0.0.0.0", globalvars.AUTO_CONNECT_PORT)}. Wainting response..."
+                f"broadcasting @ {("255.255.255.255", globalvars.AUTO_CONNECT_PORT)}. Wainting response..."
             )
             sock.sendto(
-                __make_discovery_msg(), ("0.0.0.0", globalvars.AUTO_CONNECT_PORT)
+                __make_discovery_msg(),
+                ("255.255.255.255", globalvars.AUTO_CONNECT_PORT),
             )
 
             # Aguarda resposta

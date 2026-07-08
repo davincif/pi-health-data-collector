@@ -15,7 +15,7 @@ class CPU:
     fifteen_min_avg: float | None
 
     core: CPUCore
-    virtual_cores: list[CPUCore] = []
+    physical_cores: list[CPUCore] = []
 
     def __init__(self):
         psutil.cpu_times()
@@ -36,8 +36,8 @@ class CPU:
         times_percent = psutil.cpu_times_percent(percpu=True)
         freqs = psutil.cpu_freq(percpu=True)
 
-        for core_idx in range(len(self.virtual_cores)):
-            core = self.virtual_cores[core_idx]
+        for core_idx in range(len(self.physical_cores)):
+            core = self.physical_cores[core_idx]
             core.update_time(times[core_idx], times_percent[core_idx], freqs[core_idx])
 
         self.usage_percet = psutil.cpu_percent()
@@ -61,7 +61,9 @@ class CPU:
         }
 
         if self.logical_cores > 0:
-            data["lcrinfo"] = [core.marshal_unmutables() for core in self.virtual_cores]
+            data["lcrinfo"] = [
+                core.marshal_unmutables() for core in self.physical_cores
+            ]
 
         return data
 
@@ -75,13 +77,15 @@ class CPU:
         }
 
         if self.logical_cores > 0:
-            data["lcrinfo"] = [core.marshal_update() for core in self.virtual_cores]
+            data["lcrinfo"] = [core.marshal_update() for core in self.physical_cores]
 
         return data
 
     def __build_cores(self):
         freqs = psutil.cpu_freq(percpu=True)
-        self.virtual_cores = [CPUCore(freqs[idx]) for idx in range(self.logical_cores)]
+        print("freqs", freqs)
+        print("self.logical_cores", self.logical_cores)
+        self.physical_cores = [CPUCore(freq) for freq in freqs]
 
     def __str__(self) -> str:
         return f"cpu: {str(self.core)}"

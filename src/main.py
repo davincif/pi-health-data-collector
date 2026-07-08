@@ -12,7 +12,6 @@ from types import FrameType
 
 import psutil
 
-from connections.connection import find_data_orchestrator_server
 import globalvars
 from watchers.cpu import CPU
 from watchers.disks import Disks
@@ -45,7 +44,7 @@ def main():
     validate_os()
     globalvars.set_globals()
 
-    server = find_data_orchestrator_server()
+    server = (globalvars.server_address, globalvars.server_port)
 
     if globalvars.kill_now:
         return

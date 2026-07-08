@@ -10,3 +10,16 @@ The system also works on a ThinkPad with linux system.
 pip install requeriments.txt
 python3 main.py
 ```
+
+## Docker
+
+```sh
+sudo docker build --network=host -t ldavincif/pi-health-watcher .
+sudo docker run -d --name pi-health-watcher ldavincif/pi-health-watcher
+```
+
+For running the cointainer
+
+```sh
+PORT=7325 ADDR=192.168.1.153 sudo docker compose up -d
+```
